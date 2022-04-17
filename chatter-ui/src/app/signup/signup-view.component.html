@@ -6,6 +6,10 @@
       <input [formControl]="formGroup.get('username')" class="form-control" id="usernameForLogin" placeholder="Username">
     </div>
     <div class="mb-3">
+      <label for="usernameDisplayName" class="form-label">Display Name</label>
+      <input [formControl]="formGroup.get('displayName')" class="form-control" id="usernameDisplayName" placeholder="Username">
+    </div>
+    <div class="mb-3">
       <label for="passwordForReg" class="form-label">Password</label>
       <input type="password" [formControl]="formGroup.get('password')"
              class="form-control" id="passwordForReg" placeholder="******">
