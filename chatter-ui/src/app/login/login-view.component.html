@@ -1,0 +1,20 @@
+<div class="row">
+  <div id="login-div" class="col-6">
+    <h3>User Login</h3>
+    <div class="mb-3">
+      <label for="usernameForLogin" class="form-label">Username</label>
+      <input [formControl]="formGroup.get('username')" class="form-control" id="usernameForLogin"
+             placeholder="Username">
+    </div>
+    <div class="mb-3">
+      <label for="passwordForLogin" class="form-label">Password</label>
+      <input type="password" [formControl]="formGroup.get('password')" class="form-control"
+             id="passwordForLogin" placeholder="******">
+    </div>
+    <div class="m-5 mb-0">
+      <input (click)="tryLogin()" type="button" class="form-control" value="Login">
+    </div>
+    <a (click)="goToSignUp()" class="auth-link">Not a user yet? Signup now!</a>
+  </div>
+</div>
+

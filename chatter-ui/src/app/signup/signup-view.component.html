@@ -1,0 +1,27 @@
+<div class="row">
+  <div id="signup-div" class="col-6">
+    <h3>User Registration</h3>
+    <div class="mb-3">
+      <label for="usernameForLogin" class="form-label">Username</label>
+      <input [formControl]="formGroup.get('username')" class="form-control" id="usernameForLogin" placeholder="Username">
+    </div>
+    <div class="mb-3">
+      <label for="usernameDisplayName" class="form-label">Display Name</label>
+      <input [formControl]="formGroup.get('name')" class="form-control" id="usernameDisplayName" placeholder="Username">
+    </div>
+    <div class="mb-3">
+      <label for="passwordForReg" class="form-label">Password</label>
+      <input type="password" [formControl]="formGroup.get('password')"
+             class="form-control" id="passwordForReg" placeholder="******">
+    </div>
+    <div class="mb-3">
+      <label for="passwordVerifyForReg" class="form-label">Re-enter Password</label>
+      <input type="password" [formControl]="formGroup.get('rePassword')"
+             class="form-control" id="passwordVerifyForReg" placeholder="******">
+    </div>
+    <div class="m-5 mb-0">
+      <input type="button" (click)="trySignup()" class="form-control" value="Signup">
+    </div>
+    <a (click)="goToLogin()" class="auth-link">Already a user? Login now!</a>
+  </div>
+</div>
