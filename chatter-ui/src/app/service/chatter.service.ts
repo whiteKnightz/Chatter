@@ -31,7 +31,6 @@ export class ChatterService {
   }
 
   registerUser(request: SignupRequest): Observable<any>{
-    console.log(request)
     const option = {'Content-Type': 'application/json', 'body' : JSON.stringify(request), headers: new HttpHeaders().set('Content-Type', 'application/json')};
     return this.http.request('POST','http://localhost:8000/user/', option)
   }
