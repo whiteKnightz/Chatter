@@ -1,6 +1,7 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Router} from "@angular/router";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ChatterService} from "../service/chatter.service";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -11,7 +12,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 export class LoginViewComponent implements OnInit {
   formGroup: FormGroup = new FormGroup({});
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private service: ChatterService) {
   }
 
   ngOnInit(): void {
@@ -26,9 +27,18 @@ export class LoginViewComponent implements OnInit {
   }
 
   tryLogin() {
-    if (this.formGroup.valid){
-
-    }else {
+    const value = this.formGroup.value;
+    if (this.formGroup.valid) {
+      this.service.login(value).subscribe(value1 => {
+        if (value1.data?.Authenticated) {
+          window.sessionStorage.setItem('name', value1.data.name)
+          window.sessionStorage.setItem('username', value1.data.username)
+          this.router.navigate(['/home'])
+        } else {
+          window.alert("Invalid login!")
+        }
+      }, () => window.alert("Invalid login!"))
+    } else {
       window.alert("Invalid login!")
     }
   }

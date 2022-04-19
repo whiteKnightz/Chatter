@@ -2,7 +2,7 @@ import {Inject, Injectable, Injector} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {map} from "rxjs/operators";
-import {SignupRequest} from "../shared/utils";
+import {LoginRequest, SignupRequest} from "../shared/utils";
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +35,14 @@ export class ChatterService {
       'Content-Type': 'application/json', 'body': JSON.stringify(request),
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     };
-    return this.http.request('POST', 'http://localhost:8000/user/', option)
+    return this.http.request('POST', 'http://localhost:8000/api/auth/signup/', option)
+  }
+
+  login(request: LoginRequest): Observable<any> {
+    const option = {
+      'Content-Type': 'application/json', 'body': JSON.stringify(request),
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    };
+    return this.http.request('POST', 'http://localhost:8000/api/auth/login/', option)
   }
 }

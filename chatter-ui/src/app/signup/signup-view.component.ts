@@ -26,10 +26,14 @@ export class SignupViewComponent implements OnInit {
 
   trySignup() {
     const value = this.formGroup.value;
-    if (this.formGroup.valid && value.password===value.rePassword){
+    if (this.formGroup.valid && value.password === value.rePassword) {
       delete value.rePassword
-      this.service.registerUser(value).subscribe(value1 => console.log(value1))
-    }else {
+      this.service.registerUser(value).subscribe(value1 => {
+        window.sessionStorage.setItem('name', value1.data.name)
+        window.sessionStorage.setItem('username', value1.data.username)
+        this.router.navigate(['/home'])
+      })
+    } else {
       window.alert("Invalid signup!")
     }
   }
