@@ -1,6 +1,7 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Router} from "@angular/router";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ChatterService} from "../service/chatter.service";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -11,12 +12,13 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 export class SignupViewComponent implements OnInit {
   formGroup: FormGroup = new FormGroup({});
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private service: ChatterService) {
   }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
       username: new FormControl('', [Validators.required]),
+      name: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
       rePassword: new FormControl('', [Validators.required])
     });
@@ -25,7 +27,8 @@ export class SignupViewComponent implements OnInit {
   trySignup() {
     const value = this.formGroup.value;
     if (this.formGroup.valid && value.password===value.rePassword){
-
+      delete value.rePassword
+      this.service.registerUser(value).subscribe(value1 => console.log(value1))
     }else {
       window.alert("Invalid signup!")
     }
