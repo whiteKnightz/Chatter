@@ -42,3 +42,22 @@ class Login(APIView):
                             status=status.HTTP_200_OK)
         else:
             return Response({"status": "error", "data": "Invalid Login"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChatApi(APIView):
+    def get(self, request):
+        chat1 = Chat.objects.all()
+        serializers1 = ChatSerializers(chat1, many=True)
+        return Response(serializers1.data)
+
+    def post(self, request):
+        pass
+
+class CorrespondenceApi(APIView):
+    def get(self, request):
+        chat1 = Correspondence.objects.all()
+        serializers1 = CorrespondenceSerializers(chat1, many=True)
+        return Response(serializers1.data)
+
+    def post(self, request):
+        pass
