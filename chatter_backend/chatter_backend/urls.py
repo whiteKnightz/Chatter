@@ -24,6 +24,6 @@ urlpatterns = [
     path('api/auth/login/', views.Login.as_view()),
     path('api/auth/signup/', views.Signup.as_view()),
     path('api/user/', views.UserList.as_view()),
-    path('api/chat/', views.ChatApi.as_view()),
+    path('api/chat/<str:chat_id>/', views.ChatApi.as_view()),
     path('api/correspondence/', views.CorrespondenceApi.as_view()),
 ]

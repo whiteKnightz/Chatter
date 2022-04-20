@@ -45,14 +45,21 @@ class Login(APIView):
 
 
 class ChatApi(APIView):
-    def get(self, request):
-        chat1 = Chat.objects.all()
-        serializers1 = ChatSerializers(chat1, many=True)
-        response = {'chat': serializers1.data}
-        for cha in chat1:
-            corr = Correspondence.objects.filter(chat=cha)
-            response[str(cha.chat_id)] = CorrespondenceSerializers(corr.all(), many=True).data
-        return Response(response)
+    def get(self, request, chat_id=None):
+        if chat_id is None:
+            chat1 = Chat.objects.all()
+            serializers1 = ChatSerializers(chat1, many=True)
+            response = {'chat': serializers1.data}
+            for cha in chat1:
+                corr = Correspondence.objects.filter(chat=cha)
+                response[str(cha.chat_id)] = CorrespondenceSerializers(corr.all(), many=True).data
+            return Response(response)
+        else:
+            chat1 = Chat.objects.get(chat_id=chat_id)
+            serializers1 = ChatSerializers(chat1, many=False)
+            corr=chat1.correspondences.all()
+            serializer2=CorrespondenceSerializers(corr,many=True)
+            return Response({'chat':serializers1.data,'gcs':serializer2.data})
 
     def post(self, request):
         pass
