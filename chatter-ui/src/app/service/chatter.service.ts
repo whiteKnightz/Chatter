@@ -45,4 +45,16 @@ export class ChatterService {
     };
     return this.http.request('POST', 'http://localhost:8000/api/auth/login/', option)
   }
+
+  getUsers():Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:8000/api/user/')
+  }
+
+  getChats():Observable<any> {
+        return this.http.get<any>('http://localhost:8000/api/chat/')
+  }
+
+  getChatsById(id:string) {
+        return this.http.get(`http://localhost:8000/api/chat/${id}/`)
+  }
 }

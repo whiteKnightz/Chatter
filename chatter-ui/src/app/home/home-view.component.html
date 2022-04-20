@@ -1,2 +1,14 @@
 <button type="button" (click)="logout()" id="logout-button" class="btn btn-danger">Logout</button>
-<div>Home Page</div>
+<div class="row" style="height: 60%">
+  <div class="col-3">
+    <div *ngFor="let chat of chats">
+      <span>{{username == chat.sender ? chat.receiver : chat.sender}}</span>
+    </div>
+  </div>
+  <div class="col-6"></div>
+  <div class="col-3">
+    <div *ngFor="let user of users">
+      <span>{{user.name}}</span>
+    </div>
+  </div>
+</div>
