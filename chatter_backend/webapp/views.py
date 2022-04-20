@@ -48,10 +48,15 @@ class ChatApi(APIView):
     def get(self, request):
         chat1 = Chat.objects.all()
         serializers1 = ChatSerializers(chat1, many=True)
-        return Response(serializers1.data)
+        response = {'chat': serializers1.data}
+        for cha in chat1:
+            corr = Correspondence.objects.filter(chat=cha)
+            response[str(cha.chat_id)] = CorrespondenceSerializers(corr.all(), many=True).data
+        return Response(response)
 
     def post(self, request):
         pass
+
 
 class CorrespondenceApi(APIView):
     def get(self, request):
