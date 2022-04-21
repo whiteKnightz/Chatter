@@ -67,21 +67,22 @@
 
 }
 
-#message-to-div{
+#message-to-div {
   background-color: #333333;
   color: #FFF;
   font-size: 26px;
   font-weight: bolder;
   line-height: 60px;
-  height: 9%;
+  height: 6vh;
 }
 
-#conversation-list-div{
-  height: 85%;
+#conversation-list-div {
+  height: 59.5vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-#message-input-div{
-    height: 6%;
+#message-input-div {
+  height: 3.8vh;
+  padding-top: 3px;
 }

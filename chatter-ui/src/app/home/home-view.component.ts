@@ -87,6 +87,10 @@ export class HomeViewComponent implements OnInit {
       message: new FormControl('',[])
     })
     this.cdRef.detectChanges();
+    const element = document.getElementById('conversation-list-div');
+      if (!!element) {
+        element.scrollTop = element.scrollHeight;
+      }
   }
 
   showChatDiv() {
