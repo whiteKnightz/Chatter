@@ -73,3 +73,26 @@ class CorrespondenceApi(APIView):
 
     def post(self, request):
         pass
+
+
+class ChatByPersonsApi(APIView):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        person_array = request.data
+        if person_array is not None:
+            person1 = person_array[0]
+            person2 = person_array[1]
+            chat1 = Chat.objects.raw('SELECT * FROM CHAT WHERE chat.receiver IN (%s, %s) AND sender IN (%s, %s)',[person1,person2,person1,person2])
+            serializers1 = ChatSerializers(chat1, many=True)
+            if len(serializers1.data) > 0:
+                response = {'chat': serializers1.data[0]}
+                for cha in chat1:
+                    corr = Correspondence.objects.filter(chat=cha)
+                    response['gcs'] = CorrespondenceSerializers(corr.all(), many=True).data
+                return Response({"status": "success", "data": response}, status=status.HTTP_200_OK)
+            else:
+                return Response({"status": "success", "data": None}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "error", "data": 'serializer1.errors'}, status=status.HTTP_400_BAD_REQUEST)

@@ -84,18 +84,18 @@ export class HomeViewComponent implements OnInit {
         receiver: new FormControl(data.chat.receiver, []),
       }),
       gcs: new FormArray(correspondences),
-      message: new FormControl('',[])
+      message: new FormControl('', [])
     })
     this.cdRef.detectChanges();
     const element = document.getElementById('conversation-list-div');
-      if (!!element) {
-        element.scrollTop = element.scrollHeight;
-      }
+    if (!!element) {
+      element.scrollTop = element.scrollHeight;
+    }
   }
 
   showChatDiv() {
     // @ts-ignore
-    return !!this.formGroup && !!this.formGroup.get('gcs') && !!this.formGroup.get('gcs').value.length > 0
+    return !!this.formGroup && !!this.formGroup.get('gcs') && !!this.formGroup.get('chat')
   }
 
   getTo() {
@@ -104,18 +104,33 @@ export class HomeViewComponent implements OnInit {
       this.formGroup.get('chat')?.value.receiver
   }
 
-  getChatMgsSummary(chat:any) {
-    let message = chat.chats[chat.chats.length-1].message;
+  getChatMgsSummary(chat: any) {
+    let message = chat.chats[chat.chats.length - 1].message;
     let msg = ''
-    if (message.length>16){
-      msg=`${message.replace(/(\n)/g, ' ').substring(0,16)}...`
-    }else {
-      msg=message.replace(/(\n)/g, ' ')
+    if (message.length > 16) {
+      msg = `${message.replace(/(\n)/g, ' ').substring(0, 16)}...`
+    } else {
+      msg = message.replace(/(\n)/g, ' ')
     }
     return msg;
   }
 
-  loadChatForUser(user:any) {
-    console.log(user)
+  loadChatForUser(user: any) {
+    this.service.findForPerson([user.username, this.username]).subscribe(value => {
+      if (!!value.data && !!value.data.chat) {
+        this.setFormControl(value.data);
+      } else {
+        this.setFormControl(
+          {
+            chat: {
+              sender: this.username,
+              receiver: user.username,
+              chat_id: ''
+            },
+            gcs: []
+          }
+        )
+      }
+    })
   }
 }

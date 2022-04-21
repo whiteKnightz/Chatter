@@ -57,4 +57,12 @@ export class ChatterService {
   getChatsById(id:string):Observable<Chat> {
         return this.http.get<Chat>(`http://localhost:8000/api/chat/${id}/`)
   }
+
+  findForPerson(param: string[]):Observable<any> {
+    const option = {
+      'Content-Type': 'application/json', 'body': JSON.stringify(param),
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    };
+    return this.http.request('POST', 'http://localhost:8000/api/chat/search/byPerson/', option)
+  }
 }
