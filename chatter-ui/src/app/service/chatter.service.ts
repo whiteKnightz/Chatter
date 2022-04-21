@@ -2,7 +2,7 @@ import {Inject, Injectable, Injector} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {map} from "rxjs/operators";
-import {LoginRequest, SignupRequest} from "../shared/utils";
+import {Chat, LoginRequest, SignupRequest} from "../shared/utils";
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +54,7 @@ export class ChatterService {
         return this.http.get<any>('http://localhost:8000/api/chat/')
   }
 
-  getChatsById(id:string) {
-        return this.http.get(`http://localhost:8000/api/chat/${id}/`)
+  getChatsById(id:string):Observable<Chat> {
+        return this.http.get<Chat>(`http://localhost:8000/api/chat/${id}/`)
   }
 }

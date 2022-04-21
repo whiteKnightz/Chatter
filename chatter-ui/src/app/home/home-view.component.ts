@@ -1,13 +1,15 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ChatterService} from "../service/chatter.service";
+import {FormArray, FormControl, FormGroup} from "@angular/forms";
+import {Chat, Correspondence} from "../shared/utils";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: 'home-view',
   templateUrl: './home-view.component.html',
   styleUrls: ['./home-view.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeViewComponent implements OnInit {
   isLoggedIn = false
@@ -15,6 +17,7 @@ export class HomeViewComponent implements OnInit {
   name: any = null
   users: any[] = []
   chats: any[] = []
+  formGroup: FormGroup = new FormGroup({});
 
 
   constructor(private router: Router, public route: ActivatedRoute, private service: ChatterService, private cdRef: ChangeDetectorRef,) {
@@ -22,7 +25,7 @@ export class HomeViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.service.getUsers().subscribe(value => {
-      this.users = value.filter(value1 => value1.username!==this.username);
+      this.users = value.filter(value1 => value1.username !== this.username);
       this.cdRef.detectChanges();
     })
     this.service.getChats().subscribe(value => {
@@ -55,5 +58,45 @@ export class HomeViewComponent implements OnInit {
     window.sessionStorage.removeItem('name')
     window.sessionStorage.removeItem('username')
     this.router.navigate(['/login'])
+  }
+
+  loadChat(chatDetails: any) {
+    this.service.getChatsById(chatDetails.chat_id).subscribe(value => this.setFormControl(value))
+  }
+
+  setFormControl(data: Chat) {
+    let correspondences: any[] = [];
+    if (!!data && !!data.gcs && data.gcs.length > 0) {
+      data.gcs.map(value => correspondences.push(
+        new FormControl({
+          correspondence_id: value.correspondence_id,
+          created_date: value.created_date,
+          message: value.message,
+          sender: value.sender,
+          chat: value.chat,
+        })
+      ));
+    }
+    this.formGroup = new FormGroup({
+      chat: new FormGroup({
+        chat_id: new FormControl(data.chat.chat_id, []),
+        sender: new FormControl(data.chat.sender, []),
+        receiver: new FormControl(data.chat.receiver, []),
+      }),
+      gcs: new FormArray(correspondences),
+      message: new FormControl('',[])
+    })
+    this.cdRef.detectChanges();
+  }
+
+  showChatDiv() {
+    // @ts-ignore
+    return !!this.formGroup && !!this.formGroup.get('gcs') && !!this.formGroup.get('gcs').value.length > 0
+  }
+
+  getTo() {
+    return this.formGroup.get('chat')?.value.sender !== this.username ?
+      this.formGroup.get('chat')?.value.sender :
+      this.formGroup.get('chat')?.value.receiver
   }
 }

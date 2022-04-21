@@ -1,11 +1,32 @@
 <button type="button" (click)="logout()" id="logout-button" class="btn btn-danger">Logout</button>
-<div class="row" style="height: 60%">
+<div id="chat-view" class="row" style="height: 60%">
   <div class="col-3">
-    <div *ngFor="let chat of chats">
+    <div *ngFor="let chat of chats" (click)="loadChat(chat)">
       <span>{{username == chat.sender ? chat.receiver : chat.sender}}</span>
     </div>
   </div>
-  <div class="col-6"></div>
+  <div id="conversation-div" class="col-6">
+    <div *ngIf="showChatDiv()" id="message-to-div" class="row">
+      <div class="col-12">Conversation with {{getTo()}}</div>
+    </div>
+    <div *ngIf="showChatDiv()" id="conversation-list-div" class="row">
+      <div class="col-12">
+        <div *ngFor="let gc of formGroup.get('gcs').value"
+             class="chat-message {{gc.sender===username?'chat-right':'chat-left'}}">
+          <span class="time-info {{gc.sender===username?'time-info-right':'time-info-left'}}">
+            {{gc.created_date}}
+          </span>
+          <p>{{gc.message}}</p>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="showChatDiv()" id="message-input-div" class="row">
+      <div class="col-12">
+        <input [formControl]="formGroup.get('message')" class="form-control"
+               id="message" placeholder="Send a message">
+      </div>
+    </div>
+  </div>
   <div class="col-3">
     <div *ngFor="let user of users">
       <span>{{user.name}}</span>
