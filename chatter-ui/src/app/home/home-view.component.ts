@@ -133,4 +133,9 @@ export class HomeViewComponent implements OnInit {
       }
     })
   }
+
+  sendMessage() {
+    console.log(`"${this.formGroup.get('message')?.value}" message sent!`)
+    this.formGroup.get('message')?.setValue('')
+  }
 }
