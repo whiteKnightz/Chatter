@@ -24,11 +24,13 @@ export class HomeViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.name = window.sessionStorage.getItem('name')
+    this.username = window.sessionStorage.getItem('username')
     this.service.getUsers().subscribe(value => {
       this.users = value.filter(value1 => value1.username !== this.username);
       this.cdRef.detectChanges();
     })
-    this.service.getChats().subscribe(value => {
+    this.service.getChats(this.username).subscribe(value => {
       if (!!value.chat && value.chat.length > 0) {
         for (let i = 0; i < value.chat.length; i++) {
           let chat_value = value.chat[i];
@@ -40,8 +42,6 @@ export class HomeViewComponent implements OnInit {
         this.cdRef.detectChanges();
       }
     })
-    this.name = window.sessionStorage.getItem('name')
-    this.username = window.sessionStorage.getItem('username')
     if (this.name && this.username && this.name.trim().length > 0 && this.username.trim().length > 0) {
       this.isLoggedIn = true
     }

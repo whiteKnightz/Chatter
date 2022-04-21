@@ -50,8 +50,8 @@ export class ChatterService {
     return this.http.get<any[]>('http://localhost:8000/api/user/')
   }
 
-  getChats():Observable<any> {
-        return this.http.get<any>('http://localhost:8000/api/chat/')
+  getChats(username:string):Observable<any> {
+        return this.http.get<any>(`http://localhost:8000/api/chat/search/byPerson/${username}/`)
   }
 
   getChatsById(id:string):Observable<Chat> {
