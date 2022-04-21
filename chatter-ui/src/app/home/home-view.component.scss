@@ -70,14 +70,26 @@
 #message-to-div {
   background-color: #333333;
   color: #FFF;
-  font-size: 26px;
-  font-weight: bolder;
-  line-height: 60px;
-  height: 6vh;
+  //font-size: 26px;
+  //font-weight: bolder;
+  //line-height: 60px;
+  height: 4.7vh;
+}
+
+#message-history-div {
+  background-color: #333333;
+  color: #FFF;
+  border-radius: 10px 0 0 0;
+}
+
+#contact-list-head-div {
+  background-color: #333333;
+  color: #FFF;
+  border-radius: 0 10px 0 0;
 }
 
 #conversation-list-div {
-  height: 59.5vh;
+  height: 60.8vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -85,4 +97,26 @@
 #message-input-div {
   height: 3.8vh;
   padding-top: 3px;
+}
+
+#chat-history-list {
+  list-style-type: none;
+  padding: 0 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+#chat-history-list li {
+  border-bottom: 1px solid #999;
+}
+
+#user-list {
+  list-style-type: none;
+  padding: 0 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+#user-list li {
+  border-bottom: 1px solid #999;
 }

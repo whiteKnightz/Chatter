@@ -1,13 +1,23 @@
 <button type="button" (click)="logout()" id="logout-button" class="btn btn-danger">Logout</button>
 <div id="chat-view" class="row" style="height: 60%">
   <div class="col-3">
-    <div *ngFor="let chat of chats" (click)="loadChat(chat)">
-      <span>{{username == chat.sender ? chat.receiver : chat.sender}}</span>
+    <div class="row" id="message-history-div">
+      <h2>Chat History</h2>
+    </div>
+    <div class="row">
+      <ul id="chat-history-list">
+        <li *ngFor="let chat of chats" (click)="loadChat(chat)">
+        <span style="display: flex;flex-direction: column;padding:5px;">
+          <span>{{username == chat.sender ? chat.receiver : chat.sender}}</span>
+          <span style="font-weight: 400">Message: {{getChatMgsSummary(chat)}}</span>
+        </span>
+        </li>
+      </ul>
     </div>
   </div>
   <div id="conversation-div" class="col-6">
     <div *ngIf="showChatDiv()" id="message-to-div" class="row">
-      <div class="col-12">Conversation with {{getTo()}}</div>
+      <div class="col-12"><h3>Conversation with {{getTo()}}</h3></div>
     </div>
     <div *ngIf="showChatDiv()" id="conversation-list-div" class="row">
       <div class="col-12">
@@ -28,8 +38,15 @@
     </div>
   </div>
   <div class="col-3">
-    <div *ngFor="let user of users">
-      <span>{{user.name}}</span>
+    <div class="row" id="contact-list-head-div">
+      <h2>Contact List</h2>
+    </div>
+    <div class="row">
+      <ul id="user-list">
+        <li *ngFor="let user of users" (click)="loadChatForUser(user)">
+          <span style="display: flex;flex-direction: column;padding:5px;">{{user.name}}</span>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

@@ -103,4 +103,19 @@ export class HomeViewComponent implements OnInit {
       this.formGroup.get('chat')?.value.sender :
       this.formGroup.get('chat')?.value.receiver
   }
+
+  getChatMgsSummary(chat:any) {
+    let message = chat.chats[chat.chats.length-1].message;
+    let msg = ''
+    if (message.length>16){
+      msg=`${message.replace(/(\n)/g, ' ').substring(0,16)}...`
+    }else {
+      msg=message.replace(/(\n)/g, ' ')
+    }
+    return msg;
+  }
+
+  loadChatForUser(user:any) {
+    console.log(user)
+  }
 }
