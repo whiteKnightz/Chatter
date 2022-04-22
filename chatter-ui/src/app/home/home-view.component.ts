@@ -3,6 +3,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ChatterService} from "../service/chatter.service";
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {Chat, Correspondence} from "../shared/utils";
+import * as SockJS from 'sockjs-client';
+import * as Stomp from 'stompjs';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -18,6 +20,7 @@ export class HomeViewComponent implements OnInit {
   users: any[] = []
   chats: any[] = []
   formGroup: FormGroup = new FormGroup({});
+  public stompClient:any=null;
 
 
   constructor(private router: Router, public route: ActivatedRoute, private service: ChatterService, private cdRef: ChangeDetectorRef,) {
@@ -26,6 +29,7 @@ export class HomeViewComponent implements OnInit {
   ngOnInit(): void {
     this.name = window.sessionStorage.getItem('name')
     this.username = window.sessionStorage.getItem('username')
+    this.initializeWebSocketConnection()
     this.service.getUsers().subscribe(value => {
       this.users = value.filter(value1 => value1.username !== this.username);
       this.cdRef.detectChanges();
@@ -87,10 +91,7 @@ export class HomeViewComponent implements OnInit {
       message: new FormControl('', [])
     })
     this.cdRef.detectChanges();
-    const element = document.getElementById('conversation-list-div');
-    if (!!element) {
-      element.scrollTop = element.scrollHeight;
-    }
+    this.scrollToChatEnd();
   }
 
   showChatDiv() {
@@ -137,5 +138,38 @@ export class HomeViewComponent implements OnInit {
   sendMessage() {
     console.log(`"${this.formGroup.get('message')?.value}" message sent!`)
     this.formGroup.get('message')?.setValue('')
+  }
+
+  private initializeWebSocketConnection() {
+    const serverUrl = `ws://localhost:8000/ws/socket-server/`;
+    const chatSocket = new WebSocket(serverUrl);
+
+    chatSocket.onmessage = function (e){
+      let data = JSON.parse(e.data);
+      console.log(data);
+    }
+    // const ws = new SockJS(serverUrl);
+    // this.stompClient = Stomp.over(ws);
+    // this.stompClient.debug = () => {};
+    // // this.stompClient.binaryData = "blob";
+    // this.stompClient.connect({}, (frame:any) => {
+    //   this.stompClient.subscribe('/message', (message:any) => {
+    //     if (message.body) {
+    //       this.receivedMessage(JSON.parse(message.body));
+    //       this.scrollToChatEnd();
+    //     }
+    //   }, {});
+    // });
+  }
+
+  private scrollToChatEnd() {
+    const element = document.getElementById('conversation-list-div');
+    if (!!element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }
+
+  private receivedMessage(parse: any) {
+    console.log(parse)
   }
 }
