@@ -1,2 +1,61 @@
 <button type="button" (click)="logout()" id="logout-button" class="btn btn-danger">Logout</button>
-<div>Home Page</div>
+<div id="chat-view" class="row" style="height: 60%">
+  <div class="col-3">
+    <div class="row" id="message-history-div">
+      <h2>Chat History</h2>
+    </div>
+    <div class="row">
+      <ul id="chat-history-list">
+        <li *ngFor="let chat of chats" (click)="loadChat(chat)">
+        <span style="display: flex;flex-direction: column;padding:5px;">
+          <span>{{username == chat.sender ? chat.receiver : chat.sender}}</span>
+          <span style="font-weight: 400">Message: {{getChatMgsSummary(chat)}}</span>
+        </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="conversation-div" class="col-6">
+    <div *ngIf="showChatDiv()" id="message-to-div" class="row">
+      <div class="col-12"><h3>Conversation with {{getTo()}}</h3></div>
+    </div>
+    <div *ngIf="showChatDiv()" id="conversation-list-div" class="row">
+      <div class="col-12">
+        <div *ngFor="let gc of formGroup.get('gcs').value"
+             class="chat-message {{gc.sender===username?'chat-right':'chat-left'}}">
+          <span class="time-info {{gc.sender===username?'time-info-right':'time-info-left'}}">
+            {{gc.created_date}}
+          </span>
+          <p>{{gc.message}}</p>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="showChatDiv()" id="message-input-div" class="row">
+      <div class="col-11">
+        <input [formControl]="formGroup.get('message')" class="form-control"
+               id="message" placeholder="Send a message">
+      </div>
+      <div class="col-1">
+        <button id="send-button" (click)="sendMessage()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send"
+               viewBox="0 0 16 16">
+            <path
+              d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="row" id="contact-list-head-div">
+      <h2>Contact List</h2>
+    </div>
+    <div class="row">
+      <ul id="user-list">
+        <li *ngFor="let user of users" (click)="loadChatForUser(user)">
+          <span style="display: flex;flex-direction: column;padding:5px;">{{user.name}}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

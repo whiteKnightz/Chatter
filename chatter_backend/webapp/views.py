@@ -42,3 +42,73 @@ class Login(APIView):
                             status=status.HTTP_200_OK)
         else:
             return Response({"status": "error", "data": "Invalid Login"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChatApi(APIView):
+    def get(self, request, chat_id=None):
+        if chat_id is None:
+            chat1 = Chat.objects.all()
+            serializers1 = ChatSerializers(chat1, many=True)
+            response = {'chat': serializers1.data}
+            for cha in chat1:
+                corr = Correspondence.objects.filter(chat=cha)
+                response[str(cha.chat_id)] = CorrespondenceSerializers(corr.all(), many=True).data
+            return Response(response)
+        else:
+            chat1 = Chat.objects.get(chat_id=chat_id)
+            serializers1 = ChatSerializers(chat1, many=False)
+            corr=chat1.correspondences.all()
+            serializer2=CorrespondenceSerializers(corr,many=True)
+            return Response({'chat':serializers1.data,'gcs':serializer2.data})
+
+    def post(self, request):
+        pass
+
+
+class CorrespondenceApi(APIView):
+    def get(self, request):
+        chat1 = Correspondence.objects.all()
+        serializers1 = CorrespondenceSerializers(chat1, many=True)
+        return Response(serializers1.data)
+
+    def post(self, request):
+        pass
+
+
+class ChatByPersonsApi(APIView):
+    def get(self, request, username=None):
+        if username is not None:
+            print(username)
+            chat1 = Chat.objects.raw('SELECT * FROM CHAT WHERE chat.receiver IN (%s) OR sender IN (%s)',
+                                     [username, username])
+            serializers1 = ChatSerializers(chat1, many=True)
+            print(serializers1.data)
+            if len(serializers1.data) > 0:
+                response = {'chat': serializers1.data}
+                for cha in chat1:
+                    print(cha)
+                    corr = Correspondence.objects.filter(chat=cha)
+                    response[str(cha.chat_id)] = CorrespondenceSerializers(corr.all(), many=True).data
+                return Response(response, status=status.HTTP_200_OK)
+            else:
+                return Response({"status": "success", "data": None}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "error", "data": 'serializer1.errors'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        person_array = request.data
+        if person_array is not None:
+            person1 = person_array[0]
+            person2 = person_array[1]
+            chat1 = Chat.objects.raw('SELECT * FROM CHAT WHERE chat.receiver IN (%s, %s) AND sender IN (%s, %s)',[person1,person2,person1,person2])
+            serializers1 = ChatSerializers(chat1, many=True)
+            if len(serializers1.data) > 0:
+                response = {'chat': serializers1.data[0]}
+                for cha in chat1:
+                    corr = Correspondence.objects.filter(chat=cha)
+                    response['gcs'] = CorrespondenceSerializers(corr.all(), many=True).data
+                return Response({"status": "success", "data": response}, status=status.HTTP_200_OK)
+            else:
+                return Response({"status": "success", "data": None}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "error", "data": 'serializer1.errors'}, status=status.HTTP_400_BAD_REQUEST)
