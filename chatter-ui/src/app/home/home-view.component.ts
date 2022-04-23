@@ -2,9 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncap
 import {ActivatedRoute, Router} from "@angular/router";
 import {ChatterService} from "../service/chatter.service";
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
-import {Chat, Correspondence} from "../shared/utils";
-import * as SockJS from 'sockjs-client';
-import * as Stomp from 'stompjs';
+import {Chat} from "../shared/utils";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -138,10 +136,17 @@ export class HomeViewComponent implements OnInit {
 
   sendMessage(chatSocket:any) {
     const message = this.formGroup.get('message')?.value;
-    console.log(`"${message}" message sent!`)
+    const chatValue = this.formGroup.value;
     chatSocket.send(JSON.stringify({
-      'message': message,
-      'chat_name': this.chatName
+      'correspondence': {
+        chat: chatValue.chat.chat_id,
+        created_date: Date.now().toLocaleString(),
+        message,
+        sender: this.username
+
+      },
+      'chat_name': this.chatName,
+      'chat': chatValue
     }))
     this.formGroup.get('message')?.setValue('')
   }
@@ -150,10 +155,12 @@ export class HomeViewComponent implements OnInit {
     const serverUrl = `ws://localhost:8000/ws/socket-server/`;
     const chatSocket = new WebSocket(serverUrl);
 
-
+    let _this = this
     chatSocket.onmessage = function (e:any){
       let data = JSON.parse(e.data);
-      console.log(data);
+      if (data.chat_name===_this.chatName){
+        _this.loadChatData(data)
+      }
     }
 
     // send-button
@@ -174,6 +181,10 @@ export class HomeViewComponent implements OnInit {
     //     }
     //   }, {});
     // });
+  }
+
+  loadChatData(data:any){
+    this.setFormControl(data.chat as Chat);
   }
 
   private scrollToChatEnd() {
