@@ -21,6 +21,7 @@ export class HomeViewComponent implements OnInit {
   chats: any[] = []
   formGroup: FormGroup = new FormGroup({});
   chatName = ''
+  userSearchKey: string = '';
 
   constructor(private router: Router, public route: ActivatedRoute, private service: ChatterService, private cdRef: ChangeDetectorRef,) {
   }
@@ -188,5 +189,20 @@ export class HomeViewComponent implements OnInit {
     if (!!element) {
       element.scrollTop = element.scrollHeight;
     }
+  }
+
+  getDateFormatted(created_date: any) {
+    let date = new Date(created_date);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  }
+
+  searchUserByName() {
+    this.service
+      .searchUserByName(this.userSearchKey)
+      .subscribe(value => {
+        this.users = value.filter(value1 => value1.username !== this.username);
+        this.userSearchKey = '';
+        this.cdRef.detectChanges();
+      })
   }
 }

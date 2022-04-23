@@ -24,7 +24,7 @@
         <div *ngFor="let gc of formGroup.get('gcs').value"
              class="chat-message {{gc.sender===username?'chat-right':'chat-left'}}">
           <span class="time-info {{gc.sender===username?'time-info-right':'time-info-left'}}">
-            {{gc.created_date}}
+            {{getDateFormatted(gc.created_date)}}
           </span>
           <p>{{gc.message}}</p>
         </div>
@@ -49,6 +49,11 @@
   <div class="col-3">
     <div class="row" id="contact-list-head-div">
       <h2>Contact List</h2>
+    </div>
+    <div class="row">
+      <input placeholder="Search user"
+             [(ngModel)]="userSearchKey"
+             (keydown.enter)="searchUserByName()">
     </div>
     <div class="row">
       <ul id="user-list">
