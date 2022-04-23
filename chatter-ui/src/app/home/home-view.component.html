@@ -24,7 +24,7 @@
         <div *ngFor="let gc of formGroup.get('gcs').value"
              class="chat-message {{gc.sender===username?'chat-right':'chat-left'}}">
           <span class="time-info {{gc.sender===username?'time-info-right':'time-info-left'}}">
-            {{gc.created_date}}
+            {{getDateFormatted(gc.created_date)}}
           </span>
           <p>{{gc.message}}</p>
         </div>

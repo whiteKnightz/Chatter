@@ -189,4 +189,9 @@ export class HomeViewComponent implements OnInit {
       element.scrollTop = element.scrollHeight;
     }
   }
+
+  getDateFormatted(created_date: any) {
+    let date = new Date(created_date);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  }
 }
