@@ -1,2 +1,1 @@
-# Socket Impl. explaination
-https://www.youtube.com/watch?v=cw8-KFVXpTE&ab_channel=DennisIvy
+# Chatter implementation on Django and Angular-UI using WebSocket
