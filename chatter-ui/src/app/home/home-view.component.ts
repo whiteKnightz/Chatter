@@ -20,8 +20,7 @@ export class HomeViewComponent implements OnInit {
   users: any[] = []
   chats: any[] = []
   formGroup: FormGroup = new FormGroup({});
-  public stompClient:any=null;
-
+  chatName=''
 
   constructor(private router: Router, public route: ActivatedRoute, private service: ChatterService, private cdRef: ChangeDetectorRef,) {
   }
@@ -91,6 +90,8 @@ export class HomeViewComponent implements OnInit {
       message: new FormControl('', [])
     })
     this.cdRef.detectChanges();
+    let names = [data.chat.sender, data.chat.receiver].sort()
+    this.chatName=`${names[0]}--${names[1]}`
     this.scrollToChatEnd();
   }
 
@@ -135,8 +136,13 @@ export class HomeViewComponent implements OnInit {
     })
   }
 
-  sendMessage() {
-    console.log(`"${this.formGroup.get('message')?.value}" message sent!`)
+  sendMessage(chatSocket:any) {
+    const message = this.formGroup.get('message')?.value;
+    console.log(`"${message}" message sent!`)
+    chatSocket.send(JSON.stringify({
+      'message': message,
+      'chat_name': this.chatName
+    }))
     this.formGroup.get('message')?.setValue('')
   }
 
@@ -144,10 +150,18 @@ export class HomeViewComponent implements OnInit {
     const serverUrl = `ws://localhost:8000/ws/socket-server/`;
     const chatSocket = new WebSocket(serverUrl);
 
-    chatSocket.onmessage = function (e){
+
+    chatSocket.onmessage = function (e:any){
       let data = JSON.parse(e.data);
       console.log(data);
     }
+
+    // send-button
+    const buttonEle = document.getElementById(`send-button`);
+    // @ts-ignore
+    buttonEle.addEventListener('click', (e:any)=>{
+      this.sendMessage(chatSocket);
+    })
     // const ws = new SockJS(serverUrl);
     // this.stompClient = Stomp.over(ws);
     // this.stompClient.debug = () => {};
