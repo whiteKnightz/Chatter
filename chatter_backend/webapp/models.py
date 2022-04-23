@@ -28,7 +28,7 @@ class Chat(models.Model):
         db_table = 'chat'
 
     def __str__(self):
-        return f'{self.sender} sent the chat to {self.receiver}'
+        return f'{self.sender} sent the chat to {self.receiver} with id {self.chat_id}'
 
 
 class Correspondence(models.Model):
@@ -43,4 +43,4 @@ class Correspondence(models.Model):
         db_table = 'correspondence'
 
     def __str__(self):
-        return f'{self.sender} sent \"{self.message}\" on {self.created_date}'
+        return f'{self.sender} sent \"{self.message}\" on {self.created_date} with id {self.correspondence_id}'

@@ -2,7 +2,9 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncap
 import {ActivatedRoute, Router} from "@angular/router";
 import {ChatterService} from "../service/chatter.service";
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
-import {Chat, Correspondence} from "../shared/utils";
+import {Chat} from "../shared/utils";
+// @ts-ignore
+import _ from 'lodash';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -18,7 +20,7 @@ export class HomeViewComponent implements OnInit {
   users: any[] = []
   chats: any[] = []
   formGroup: FormGroup = new FormGroup({});
-
+  chatName = ''
 
   constructor(private router: Router, public route: ActivatedRoute, private service: ChatterService, private cdRef: ChangeDetectorRef,) {
   }
@@ -26,6 +28,7 @@ export class HomeViewComponent implements OnInit {
   ngOnInit(): void {
     this.name = window.sessionStorage.getItem('name')
     this.username = window.sessionStorage.getItem('username')
+    this.initializeWebSocketConnection()
     this.service.getUsers().subscribe(value => {
       this.users = value.filter(value1 => value1.username !== this.username);
       this.cdRef.detectChanges();
@@ -87,10 +90,9 @@ export class HomeViewComponent implements OnInit {
       message: new FormControl('', [])
     })
     this.cdRef.detectChanges();
-    const element = document.getElementById('conversation-list-div');
-    if (!!element) {
-      element.scrollTop = element.scrollHeight;
-    }
+    let names = [data.chat.sender, data.chat.receiver].sort()
+    this.chatName = `${names[0]}--${names[1]}`
+    this.scrollToChatEnd();
   }
 
   showChatDiv() {
@@ -134,8 +136,57 @@ export class HomeViewComponent implements OnInit {
     })
   }
 
-  sendMessage() {
-    console.log(`"${this.formGroup.get('message')?.value}" message sent!`)
+  sendMessage(chatSocket: any) {
+    const message = this.formGroup.get('message')?.value;
+    const chatValue = this.formGroup.value;
+    chatSocket.send(JSON.stringify({
+      'correspondence': {
+        chat: chatValue.chat.chat_id,
+        created_date: Date.now().toLocaleString(),
+        message,
+        sender: this.username
+
+      },
+      'chat_name': this.chatName,
+      'chat': chatValue
+    }))
     this.formGroup.get('message')?.setValue('')
+  }
+
+  private initializeWebSocketConnection() {
+    const serverUrl = `ws://localhost:8000/ws/socket-server/`;
+    const chatSocket = new WebSocket(serverUrl);
+
+    let _this = this
+    chatSocket.onmessage = function (e: any) {
+      let data = JSON.parse(e.data);
+      _this.loadChatData(data)
+    }
+
+    const buttonEle = document.getElementById(`send-button`);
+    // @ts-ignore
+    buttonEle.addEventListener('click', (e: any) => {
+      this.sendMessage(chatSocket);
+    })
+  }
+
+  loadChatData(data: any) {
+    if (data.chat_name.trim() === this.chatName.trim()) {
+      this.setFormControl(data.chat);
+    }
+    if (data.chat_name.trim().split('--').indexOf(this.username) > -1 &&
+      this.chats.filter(value => value.chat_id === data.chat.chat.chat_id).length < 1) {
+      let chat = _.cloneDeep(data.chat);
+      chat.chat.chats = chat.gcs
+      this.chats.push(chat.chat);
+    }
+    this.cdRef.detectChanges();
+  }
+
+  private scrollToChatEnd() {
+    const element = document.getElementById('conversation-list-div');
+    if (!!element) {
+      element.scrollTop = element.scrollHeight;
+    }
   }
 }

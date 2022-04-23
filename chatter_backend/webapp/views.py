@@ -13,10 +13,16 @@ from .serializer import *
 # Create your views here.
 class UserList(APIView):
 
-    def get(self, request):
-        user1 = User.objects.all()
-        serializers1 = UserSerializers(user1, many=True)
-        return Response(serializers1.data)
+    def get(self, request, name=None):
+        if name is None:
+            user1 = User.objects.all()
+            serializers1 = UserSerializers(user1, many=True)
+            return Response(serializers1.data)
+        else:
+            user1 = User.objects.raw('SELECT * FROM USERS WHERE name LIKE %s',
+                                     [f'%{name}%'])
+            serializers1 = UserSerializers(user1, many=True)
+            return Response(serializers1.data)
 
 
 class Signup(APIView):
@@ -78,15 +84,12 @@ class CorrespondenceApi(APIView):
 class ChatByPersonsApi(APIView):
     def get(self, request, username=None):
         if username is not None:
-            print(username)
             chat1 = Chat.objects.raw('SELECT * FROM CHAT WHERE chat.receiver IN (%s) OR sender IN (%s)',
                                      [username, username])
             serializers1 = ChatSerializers(chat1, many=True)
-            print(serializers1.data)
             if len(serializers1.data) > 0:
                 response = {'chat': serializers1.data}
                 for cha in chat1:
-                    print(cha)
                     corr = Correspondence.objects.filter(chat=cha)
                     response[str(cha.chat_id)] = CorrespondenceSerializers(corr.all(), many=True).data
                 return Response(response, status=status.HTTP_200_OK)

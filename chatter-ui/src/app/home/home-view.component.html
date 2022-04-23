@@ -30,13 +30,13 @@
         </div>
       </div>
     </div>
-    <div *ngIf="showChatDiv()" id="message-input-div" class="row">
+    <div [ngClass]="showChatDiv()?'':'d-none'" id="message-input-div" class="row">
       <div class="col-11">
         <input [formControl]="formGroup.get('message')" class="form-control"
                id="message" placeholder="Send a message">
       </div>
       <div class="col-1">
-        <button id="send-button" (click)="sendMessage()">
+        <button id="send-button">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send"
                viewBox="0 0 16 16">
             <path
