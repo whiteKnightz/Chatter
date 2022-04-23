@@ -57,7 +57,7 @@
     </div>
     <div class="row">
       <ul id="user-list">
-        <li *ngFor="let user of users" (click)="loadChatForUser(user)">
+        <li *ngFor="let user of users" (click)="loadChatForUser(user)" class="user-li">
           <span style="display: flex;flex-direction: column;padding:5px;">{{user.name}}</span>
         </li>
       </ul>
