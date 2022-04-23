@@ -191,8 +191,8 @@ export class HomeViewComponent implements OnInit {
     }
   }
 
-  getDateFormatted(created_date: any) {
-    let date = new Date(created_date);
+  getDateFormatted(created_date: string) {
+    let date = new Date(`${created_date.substring(0,created_date.length-1)}`);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
   }
 
