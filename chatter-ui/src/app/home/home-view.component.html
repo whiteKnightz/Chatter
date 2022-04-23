@@ -51,6 +51,11 @@
       <h2>Contact List</h2>
     </div>
     <div class="row">
+      <input placeholder="Search user"
+             [(ngModel)]="userSearchKey"
+             (keydown.enter)="searchUserByName()">
+    </div>
+    <div class="row">
       <ul id="user-list">
         <li *ngFor="let user of users" (click)="loadChatForUser(user)">
           <span style="display: flex;flex-direction: column;padding:5px;">{{user.name}}</span>
