@@ -18,7 +18,7 @@ export class HomeViewComponent implements OnInit {
   users: any[] = []
   chats: any[] = []
   formGroup: FormGroup = new FormGroup({});
-  chatName=''
+  chatName = ''
 
   constructor(private router: Router, public route: ActivatedRoute, private service: ChatterService, private cdRef: ChangeDetectorRef,) {
   }
@@ -89,7 +89,7 @@ export class HomeViewComponent implements OnInit {
     })
     this.cdRef.detectChanges();
     let names = [data.chat.sender, data.chat.receiver].sort()
-    this.chatName=`${names[0]}--${names[1]}`
+    this.chatName = `${names[0]}--${names[1]}`
     this.scrollToChatEnd();
   }
 
@@ -134,7 +134,7 @@ export class HomeViewComponent implements OnInit {
     })
   }
 
-  sendMessage(chatSocket:any) {
+  sendMessage(chatSocket: any) {
     const message = this.formGroup.get('message')?.value;
     const chatValue = this.formGroup.value;
     chatSocket.send(JSON.stringify({
@@ -156,35 +156,34 @@ export class HomeViewComponent implements OnInit {
     const chatSocket = new WebSocket(serverUrl);
 
     let _this = this
-    chatSocket.onmessage = function (e:any){
+    chatSocket.onmessage = function (e: any) {
       let data = JSON.parse(e.data);
-      if (data.chat_name===_this.chatName){
-        _this.loadChatData(data)
-      }
+      _this.loadChatData(data)
     }
 
-    // send-button
     const buttonEle = document.getElementById(`send-button`);
     // @ts-ignore
-    buttonEle.addEventListener('click', (e:any)=>{
+    buttonEle.addEventListener('click', (e: any) => {
       this.sendMessage(chatSocket);
     })
-    // const ws = new SockJS(serverUrl);
-    // this.stompClient = Stomp.over(ws);
-    // this.stompClient.debug = () => {};
-    // // this.stompClient.binaryData = "blob";
-    // this.stompClient.connect({}, (frame:any) => {
-    //   this.stompClient.subscribe('/message', (message:any) => {
-    //     if (message.body) {
-    //       this.receivedMessage(JSON.parse(message.body));
-    //       this.scrollToChatEnd();
-    //     }
-    //   }, {});
-    // });
   }
 
-  loadChatData(data:any){
-    this.setFormControl(data.chat as Chat);
+  loadChatData(data: any) {
+    if (data.chat_name.trim() === this.chatName.trim()) {
+      this.setFormControl({
+        chat: {
+          sender: data.sender,
+          chat_id: data.chat_id,
+          receiver: data.receiver
+        },
+        gcs: data.chat.chats
+      });
+    }
+    if (data.chat_name.trim().split('--').indexOf(this.username) > -1 &&
+      this.chats.filter(value => value.chat_id === data.chat.chat_id).length < 1) {
+      this.chats.push(data.chat);
+    }
+    this.cdRef.detectChanges();
   }
 
   private scrollToChatEnd() {
@@ -192,9 +191,5 @@ export class HomeViewComponent implements OnInit {
     if (!!element) {
       element.scrollTop = element.scrollHeight;
     }
-  }
-
-  private receivedMessage(parse: any) {
-    console.log(parse)
   }
 }
