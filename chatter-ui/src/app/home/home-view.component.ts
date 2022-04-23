@@ -3,6 +3,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ChatterService} from "../service/chatter.service";
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {Chat} from "../shared/utils";
+// @ts-ignore
+import _ from 'lodash';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -170,18 +172,13 @@ export class HomeViewComponent implements OnInit {
 
   loadChatData(data: any) {
     if (data.chat_name.trim() === this.chatName.trim()) {
-      this.setFormControl({
-        chat: {
-          sender: data.sender,
-          chat_id: data.chat_id,
-          receiver: data.receiver
-        },
-        gcs: data.chat.chats
-      });
+      this.setFormControl(data.chat);
     }
     if (data.chat_name.trim().split('--').indexOf(this.username) > -1 &&
-      this.chats.filter(value => value.chat_id === data.chat.chat_id).length < 1) {
-      this.chats.push(data.chat);
+      this.chats.filter(value => value.chat_id === data.chat.chat.chat_id).length < 1) {
+      let chat = _.cloneDeep(data.chat);
+      chat.chat.chats = chat.gcs
+      this.chats.push(chat.chat);
     }
     this.cdRef.detectChanges();
   }
