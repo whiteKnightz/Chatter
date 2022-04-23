@@ -13,10 +13,16 @@ from .serializer import *
 # Create your views here.
 class UserList(APIView):
 
-    def get(self, request):
-        user1 = User.objects.all()
-        serializers1 = UserSerializers(user1, many=True)
-        return Response(serializers1.data)
+    def get(self, request, name=None):
+        if name is None:
+            user1 = User.objects.all()
+            serializers1 = UserSerializers(user1, many=True)
+            return Response(serializers1.data)
+        else:
+            user1 = User.objects.raw('SELECT * FROM USERS WHERE name LIKE %s',
+                                     [f'%{name}%'])
+            serializers1 = UserSerializers(user1, many=True)
+            return Response(serializers1.data)
 
 
 class Signup(APIView):
